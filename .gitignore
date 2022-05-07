@@ -16,6 +16,8 @@
 
 .vscode/
 
-repsi
 *.json
 *.svg
+
+reg2nfa/reg2nfa
+nfa2dfa/nfa2dfa
