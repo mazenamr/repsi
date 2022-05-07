@@ -2,6 +2,7 @@ package parser
 
 import (
 	"fmt"
+	"log"
 	"repsi/consts"
 	"repsi/machines/nfa"
 	"strconv"
@@ -13,7 +14,7 @@ func Parse(s string) *nfa.Machine {
 	}
 	tokens := Preprocess(s)
 	if !CheckBrakets(tokens) {
-		panic("invalid regex")
+		log.Fatal("invalid regex")
 	}
 	queue := Postfix(tokens)
 	stack := make([]*nfa.Machine, 0, len(queue))
@@ -40,7 +41,7 @@ func Parse(s string) *nfa.Machine {
 		case Repeat:
 			count, err := strconv.Atoi(token.Value)
 			if err != nil {
-				panic("invalid token")
+				log.Fatal("invalid token")
 			}
 			r := stack[len(stack)-1]
 			stack = stack[:len(stack)-1]
@@ -62,11 +63,11 @@ func Parse(s string) *nfa.Machine {
 			stack = stack[:len(stack)-1]
 			stack = append(stack, r.Star())
 		default:
-			panic("invalid token")
+			log.Fatal("invalid token")
 		}
 	}
 	if len(stack) != 1 {
-		panic("invalid regex")
+		log.Fatal("invalid regex")
 	}
 	stack[0].Renumber()
 	return stack[0]
@@ -87,7 +88,7 @@ func Preprocess(s string) []*Token {
 		case '|':
 			tokens = append(tokens, &Token{Type: Union})
 			if i+1 < len(s) && Operator[CharType[s[i+1]]] {
-				panic("invalid regex")
+				log.Fatal("invalid regex")
 			}
 		case '(':
 			tokens = append(tokens, &Token{Type: OpenGroup})
@@ -100,7 +101,7 @@ func Preprocess(s string) []*Token {
 				token += string(s[i])
 			}
 			if token[len(token)-1] != ']' {
-				panic("invalid regex")
+				log.Fatal("invalid regex")
 			}
 			tokens = append(tokens, &Token{Value: token, Type: CharSet})
 		case '{':
@@ -122,7 +123,7 @@ func Preprocess(s string) []*Token {
 				}
 				minval, err := strconv.Atoi(min)
 				if err != nil {
-					panic("invalid regex")
+					log.Fatal("invalid regex")
 				}
 				tokens = append(tokens, &Token{Value: min, Type: Repeat})
 				if max == "" {
@@ -130,27 +131,27 @@ func Preprocess(s string) []*Token {
 				} else {
 					maxval, err := strconv.Atoi(max)
 					if err != nil {
-						panic("invalid regex")
+						log.Fatal("invalid regex")
 					}
 					if maxval < minval {
-						panic("invalid regex")
+						log.Fatal("invalid regex")
 					}
-					panic("{min,max} not supported yet")
+					log.Fatal("{min,max} not supported yet")
 				}
 			} else if i < len(s) && s[i] == '}' {
 				minval, err := strconv.Atoi(min)
 				if err != nil {
-					panic("invalid regex")
+					log.Fatal("invalid regex")
 				}
 				if minval < 0 {
-					panic("invalid regex")
+					log.Fatal("invalid regex")
 				} else if minval == 0 {
 					tokens = append(tokens, &Token{Type: Optional})
 				} else {
 					tokens = append(tokens, &Token{Value: fmt.Sprint(minval - 1), Type: Repeat})
 				}
 			} else {
-				panic("invalid regex")
+				log.Fatal("invalid regex")
 			}
 		case '\\':
 			i++
@@ -214,7 +215,7 @@ func Postfix(tokens []*Token) []*Token {
 				}
 			}
 		} else {
-			panic("invalid token")
+			log.Fatal("invalid token")
 		}
 	}
 	for len(stack) > 0 {

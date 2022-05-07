@@ -21,7 +21,7 @@ func (a *Machine) Draw(filename string) {
 		a, e1 := strconv.Atoi(states[i][1:])
 		b, e2 := strconv.Atoi(states[j][1:])
 		if e1 != nil || e2 != nil {
-			panic("invalid state name")
+			log.Fatal("invalid state name")
 		}
 		return a < b
 	})

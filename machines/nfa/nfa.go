@@ -2,14 +2,13 @@ package nfa
 
 import (
 	"fmt"
+	"log"
 	"repsi/consts"
 	"sort"
 	"strconv"
 )
 
-var (
-	count int = 0
-)
+var count int = 0
 
 type Machine struct {
 	Start *State
@@ -81,7 +80,7 @@ func (m *Machine) States() []*State {
 		a, e1 := strconv.Atoi(states[i].Name[1:])
 		b, e2 := strconv.Atoi(states[j].Name[1:])
 		if e1 != nil || e2 != nil {
-			panic("invalid state name")
+			log.Fatal("invalid state name")
 		}
 		return a < b
 	})
