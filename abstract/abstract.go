@@ -6,32 +6,40 @@ import (
 	"os"
 )
 
-type AbstractMachine struct {
+type Machine struct {
 	StartingState string
-	States        map[string]AbstractState
+	States        map[string]State
 }
 
-type AbstractState struct {
+type State struct {
 	IsTerminatingState bool
 	Moves              map[string][]string
 }
 
-func (a AbstractState) AddMove(token string, state string) {
+func (a State) AddMove(token string, state string) {
 	a.Moves[token] = append(a.Moves[token], state)
 }
 
-func (a *AbstractMachine) Json() string {
+func (a *Machine) Json() string {
 	j, _ := json.MarshalIndent(a, "", "  ")
 	return string(j)
 }
 
-func (a *AbstractMachine) Write(filename string) {
-	f, _ := os.Create(fmt.Sprintf("%s.json", filename))
+func Read(filename string) *Machine {
+	file, _ := os.Open(filename)
+	defer file.Close()
+	var a Machine
+	json.NewDecoder(file).Decode(&a)
+	return &a
+}
+
+func (a *Machine) Write(filename string) {
+	f, _ := os.Create(filename)
 	defer f.Close()
 	f.WriteString(a.Json())
 }
 
-func (a *AbstractMachine) Out(filename string) {
-	a.Write(filename)
+func (a *Machine) Out(filename string) {
+	a.Write(fmt.Sprintf("%s.json", filename))
 	a.Draw(filename)
 }

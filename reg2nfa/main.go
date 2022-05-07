@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
-	"repsi/reg2nfa/parser"
+	"repsi/parser"
 )
 
 func main() {
@@ -17,6 +17,6 @@ func main() {
 		os.Exit(1)
 	}
 
-	m := parser.Parse(os.Args[1])
+	m := parser.Parse(os.Args[2])
 	m.Abstract().Out("nfa")
 }

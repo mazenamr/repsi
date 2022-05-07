@@ -12,7 +12,7 @@ import (
 	"github.com/goccy/go-graphviz/cgraph"
 )
 
-func (a *AbstractMachine) Draw(filename string) {
+func (a *Machine) Draw(filename string) {
 	states := make([]string, 0, len(a.States))
 	for s := range a.States {
 		states = append(states, s)

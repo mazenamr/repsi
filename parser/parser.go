@@ -8,6 +8,9 @@ import (
 )
 
 func Parse(s string) *nfa.Machine {
+	if len(s) == 0 {
+		return nfa.EmptyMachine()
+	}
 	tokens := Preprocess(s)
 	if !CheckBrakets(tokens) {
 		panic("invalid regex")
