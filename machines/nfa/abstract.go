@@ -1,6 +1,6 @@
 package nfa
 
-import "repsi/abstract"
+import "repsi/machines/abstract"
 
 func (m *Machine) Abstract() *abstract.Machine {
 	a := &abstract.Machine{States: make(map[string]abstract.State)}

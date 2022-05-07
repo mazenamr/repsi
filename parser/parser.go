@@ -3,7 +3,7 @@ package parser
 import (
 	"fmt"
 	"repsi/consts"
-	"repsi/nfa"
+	"repsi/machines/nfa"
 	"strconv"
 )
 
