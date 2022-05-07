@@ -23,5 +23,5 @@ func main() {
 	n := nfa.FromAbstract(a)
 	d := dfa.Generate(n)
 	fmt.Println(d)
-	d.Abstract().Out("dfa")
+	d.Abstract().Out(os.Args[3])
 }
