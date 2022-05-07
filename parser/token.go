@@ -16,16 +16,6 @@ const (
 	CloseGroup
 )
 
-var specialChars = map[byte]bool{
-	'*': true,
-	'+': true,
-	'?': true,
-	'|': true,
-	'(': true,
-	')': true,
-	'{': true,
-}
-
 var charTokenType = map[byte]tokenType{
 	'.': Wildcard,
 	'[': CharSet,
