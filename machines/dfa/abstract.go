@@ -5,7 +5,7 @@ import "repsi/machines/abstract"
 func (m *Machine) Abstract() *abstract.Machine {
 	a := &abstract.Machine{States: make(map[string]abstract.State)}
 	a.StartingState = m.Name
-	for _, s := range m.States() {
+	for _, s := range m.Machines() {
 		a.States[s.Name] = abstract.State{IsTerminatingState: s.Terminating, Moves: make(map[string][]string)}
 		for t, to := range s.Moves {
 			a.States[s.Name].AddMove(t, to.Name)

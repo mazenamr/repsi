@@ -14,8 +14,8 @@ type Machine struct {
 }
 
 func (m Machine) String() (r string) {
-	states := m.States()
-	for _, s := range states {
+	machines := m.Machines()
+	for _, s := range machines {
 		if s.Terminating {
 			r += ">>"
 		}
@@ -28,7 +28,7 @@ func (m Machine) String() (r string) {
 	return
 }
 
-func (m *Machine) States() []*Machine {
+func (m *Machine) Machines() []*Machine {
 	set := make(map[*Machine]bool)
 	set[m] = true
 
@@ -64,7 +64,7 @@ func (m *Machine) States() []*Machine {
 
 func (m *Machine) Renumber() {
 	count = 0
-	for _, s := range m.States() {
+	for _, s := range m.Machines() {
 		s.Name = fmt.Sprintf("S%d", count)
 		count++
 	}
