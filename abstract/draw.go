@@ -5,6 +5,7 @@ import (
 	"log"
 	"repsi/consts"
 	"sort"
+	"strconv"
 	"strings"
 
 	"github.com/goccy/go-graphviz"
@@ -12,6 +13,19 @@ import (
 )
 
 func (a *AbstractMachine) Draw(filename string) {
+	states := make([]string, 0, len(a.States))
+	for s := range a.States {
+		states = append(states, s)
+	}
+	sort.SliceStable(states, func(i, j int) bool {
+		a, e1 := strconv.Atoi(states[i][1:])
+		b, e2 := strconv.Atoi(states[j][1:])
+		if e1 != nil || e2 != nil {
+			panic("invalid state name")
+		}
+		return a < b
+	})
+
 	g := graphviz.New()
 
 	graph, err := g.Graph(graphviz.Directed)
@@ -28,7 +42,8 @@ func (a *AbstractMachine) Draw(filename string) {
 
 	nodes := make(map[string]*cgraph.Node)
 
-	for name, s := range a.States {
+	for _, name := range states {
+		s := a.States[name]
 		n, err := graph.CreateNode(name)
 		n.SetFixedSize(true)
 		n.SetWidth(consts.NodeWidth)
@@ -66,7 +81,8 @@ func (a *AbstractMachine) Draw(filename string) {
 	edges := make(map[string]*cgraph.Edge)
 	moves := make(map[string][]string)
 
-	for from, s := range a.States {
+	for _, from := range states {
+		s := a.States[from]
 		for t, to := range s.Moves {
 			for _, to := range to {
 				edgeName := fmt.Sprintf("M-%s-%s", from, to)
