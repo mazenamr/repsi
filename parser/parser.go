@@ -12,11 +12,11 @@ func Parse(s string) *nfa.Machine {
 	if len(s) == 0 {
 		return nfa.EmptyMachine()
 	}
-	tokens := Preprocess(s)
-	if !CheckBrakets(tokens) {
+	tokens := tokenize(s)
+	if !checkBrackets(tokens) {
 		log.Fatal("invalid regex")
 	}
-	queue := Postfix(tokens)
+	queue := postfix(tokens)
 	stack := make([]*nfa.Machine, 0, len(queue))
 	for _, token := range queue {
 		switch token.Type {
@@ -73,7 +73,7 @@ func Parse(s string) *nfa.Machine {
 	return stack[0]
 }
 
-func Preprocess(s string) []*Token {
+func tokenize(s string) []*Token {
 	tokens := make([]*Token, 0, len(s))
 	for i := 0; i < len(s); i++ {
 		switch s[i] {
@@ -87,7 +87,7 @@ func Preprocess(s string) []*Token {
 			tokens = append(tokens, &Token{Type: Optional})
 		case '|':
 			tokens = append(tokens, &Token{Type: Union})
-			if i+1 < len(s) && Operator[CharType[s[i+1]]] {
+			if i+1 < len(s) && isOperator[charTokenType[s[i+1]]] {
 				log.Fatal("invalid regex")
 			}
 		case '(':
@@ -160,8 +160,8 @@ func Preprocess(s string) []*Token {
 			tokens = append(tokens, &Token{Value: string(s[i]), Type: Literal})
 		}
 
-		if CharType[s[i]] != Union && CharType[s[i]] != OpenGroup {
-			if i+1 < len(s) && !Operator[CharType[s[i+1]]] && CharType[s[i+1]] != CloseGroup {
+		if charTokenType[s[i]] != Union && charTokenType[s[i]] != OpenGroup {
+			if i+1 < len(s) && !isOperator[charTokenType[s[i+1]]] && charTokenType[s[i+1]] != CloseGroup {
 				tokens = append(tokens, &Token{Type: Concat})
 			}
 		}
@@ -169,7 +169,7 @@ func Preprocess(s string) []*Token {
 	return tokens
 }
 
-func CheckBrakets(tokens []*Token) bool {
+func checkBrackets(tokens []*Token) bool {
 	stack := make([]*Token, 0, len(tokens))
 	for _, token := range tokens {
 		switch token.Type {
@@ -185,16 +185,16 @@ func CheckBrakets(tokens []*Token) bool {
 	return len(stack) == 0
 }
 
-func Postfix(tokens []*Token) []*Token {
+func postfix(tokens []*Token) []*Token {
 	stack := make([]*Token, 0, len(tokens))
 	queue := make([]*Token, 0, len(tokens))
 	for _, token := range tokens {
 		if token.Type == Literal || token.Type == Wildcard || token.Type == CharSet {
 			queue = append(queue, token)
-		} else if Operator[token.Type] {
+		} else if isOperator[token.Type] {
 			for len(stack) > 0 {
 				t := stack[len(stack)-1]
-				if Precedence[t.Type] >= Precedence[token.Type] {
+				if precedence[t.Type] >= precedence[token.Type] {
 					stack = stack[:len(stack)-1]
 					queue = append(queue, t)
 				} else {
