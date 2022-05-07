@@ -30,3 +30,8 @@ func (a *AbstractMachine) Write(filename string) {
 	defer f.Close()
 	f.WriteString(a.Json())
 }
+
+func (a *AbstractMachine) Out(filename string) {
+	a.Write(filename)
+	a.Draw(filename)
+}

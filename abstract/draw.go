@@ -81,6 +81,8 @@ func (a *AbstractMachine) Draw(filename string) {
 				}
 
 				switch t {
+				case string(consts.WildcardToken):
+					t = "<any>"
 				case "":
 					t = "<empty>"
 				case " ":
@@ -93,6 +95,17 @@ func (a *AbstractMachine) Draw(filename string) {
 					t = "<comma>"
 				case ".":
 					t = "<dot>"
+				}
+
+				if len(t) > 1 {
+					if t[0] == '[' {
+						if t[1] != '^' {
+							t = fmt.Sprintf("<any of> [%s]", t[2:len(t)-1])
+						} else {
+							t = fmt.Sprintf("<any except> [%s]", t[3:len(t)-1])
+						}
+					}
+
 				}
 
 				moves[edgeName] = append(moves[edgeName], t)

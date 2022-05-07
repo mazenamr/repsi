@@ -24,5 +24,5 @@ func (s State) String() (r string) {
 }
 
 func (t Move) String() string {
-	return fmt.Sprintf("-(%q)-> %q", t.Token, t.To.Name)
+	return fmt.Sprintf("-(%q)-> %s", t.Token, t.To.Name)
 }
