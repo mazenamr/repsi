@@ -25,7 +25,7 @@ func (a *Machine) Json() string {
 	return string(j)
 }
 
-func Read(filename string) *Machine {
+func Load(filename string) *Machine {
 	file, _ := os.Open(filename)
 	defer file.Close()
 	var a Machine
@@ -33,13 +33,13 @@ func Read(filename string) *Machine {
 	return &a
 }
 
-func (a *Machine) Write(filename string) {
+func (a *Machine) Save(filename string) {
 	f, _ := os.Create(filename)
 	defer f.Close()
 	f.WriteString(a.Json())
 }
 
 func (a *Machine) Out(filename string) {
-	a.Write(fmt.Sprintf("%s.json", filename))
+	a.Save(fmt.Sprintf("%s.json", filename))
 	a.Draw(filename)
 }

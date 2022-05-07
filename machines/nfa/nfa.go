@@ -108,3 +108,13 @@ func (m *Machine) Renumber() {
 		count++
 	}
 }
+
+func (m *Machine) Prime() {
+	m.Renumber()
+	primes := consts.Primes(len(m.States()))
+	count = primes[len(primes)-1]
+	states := m.States()
+	for i, s := range states {
+		s.Name = fmt.Sprintf("S%d", primes[i])
+	}
+}

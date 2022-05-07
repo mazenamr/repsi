@@ -8,7 +8,7 @@ func (m *Machine) Abstract() *abstract.Machine {
 	for _, s := range m.States() {
 		a.States[s.Name] = abstract.State{IsTerminatingState: s.Terminating, Moves: make(map[string][]string)}
 		for _, t := range s.Moves {
-			a.States[s.Name].AddMove(string(t.Token), t.To.Name)
+			a.States[s.Name].AddMove(t.Token, t.To.Name)
 		}
 	}
 	return a
