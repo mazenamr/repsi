@@ -30,6 +30,8 @@ func (a *AbstractMachine) Draw(filename string) {
 
 	for name, s := range a.States {
 		n, err := graph.CreateNode(name)
+		n.SetFixedSize(true)
+		n.SetWidth(consts.NodeWidth)
 		n.SetPenWidth(consts.NodePenWidth)
 		n.SetStyle(cgraph.FilledNodeStyle)
 		nodes[name] = n
@@ -98,9 +100,9 @@ func (a *AbstractMachine) Draw(filename string) {
 				if len(t) > 1 {
 					if t[0] == '[' {
 						if t[1] != '^' {
-							t = fmt.Sprintf("<any of> [%s]", t[2:len(t)-1])
+							t = fmt.Sprintf("<any of [%s]>", t[1:len(t)-1])
 						} else {
-							t = fmt.Sprintf("<any except> [%s]", t[3:len(t)-1])
+							t = fmt.Sprintf("<any except [%s]>", t[2:len(t)-1])
 						}
 					}
 

@@ -1,8 +1,10 @@
 package parser
 
 import (
+	"fmt"
 	"repsi/consts"
 	"repsi/nfa"
+	"strconv"
 )
 
 func Parse(s string) *nfa.Machine {
@@ -12,6 +14,59 @@ func Parse(s string) *nfa.Machine {
 	}
 	queue := Postfix(tokens)
 	stack := make([]*nfa.Machine, 0, len(queue))
+	for _, token := range queue {
+		switch token.Type {
+		case Literal:
+			stack = append(stack, nfa.TokenMachine(token.Value))
+		case Wildcard:
+			stack = append(stack, nfa.TokenMachine(consts.WildcardToken))
+		case CharSet:
+			stack = append(stack, nfa.TokenMachine(token.Value))
+		case Union:
+			r := stack[len(stack)-1]
+			stack = stack[:len(stack)-1]
+			l := stack[len(stack)-1]
+			stack = stack[:len(stack)-1]
+			stack = append(stack, nfa.Union(l, r))
+		case Concat:
+			r := stack[len(stack)-1]
+			stack = stack[:len(stack)-1]
+			l := stack[len(stack)-1]
+			stack = stack[:len(stack)-1]
+			stack = append(stack, nfa.Concat(l, r))
+		case Repeat:
+			count, err := strconv.Atoi(token.Value)
+			if err != nil {
+				panic("invalid token")
+			}
+			r := stack[len(stack)-1]
+			stack = stack[:len(stack)-1]
+			c := r.Copy()
+			for i := 0; i < count; i++ {
+				r = r.Concat(c.Copy())
+			}
+			stack = append(stack, r)
+		case Optional:
+			r := stack[len(stack)-1]
+			stack = stack[:len(stack)-1]
+			stack = append(stack, r.Optional())
+		case Plus:
+			r := stack[len(stack)-1]
+			stack = stack[:len(stack)-1]
+			stack = append(stack, r.Plus())
+		case Star:
+			r := stack[len(stack)-1]
+			stack = stack[:len(stack)-1]
+			stack = append(stack, r.Star())
+		default:
+			panic("invalid token")
+		}
+	}
+	if len(stack) != 1 {
+		panic("invalid regex")
+	}
+	stack[0].Renumber()
+	return stack[0]
 }
 
 func Preprocess(s string) []*Token {
@@ -62,8 +117,35 @@ func Preprocess(s string) []*Token {
 				if min == "" {
 					min = "0"
 				}
+				minval, err := strconv.Atoi(min)
+				if err != nil {
+					panic("invalid regex")
+				}
+				tokens = append(tokens, &Token{Value: min, Type: Repeat})
+				if max == "" {
+					tokens = append(tokens, &Token{Type: Plus})
+				} else {
+					maxval, err := strconv.Atoi(max)
+					if err != nil {
+						panic("invalid regex")
+					}
+					if maxval < minval {
+						panic("invalid regex")
+					}
+					panic("{min,max} not supported yet")
+				}
 			} else if i < len(s) && s[i] == '}' {
-				tokens = append(tokens, &Token{Value: string(min), Type: Repeat})
+				minval, err := strconv.Atoi(min)
+				if err != nil {
+					panic("invalid regex")
+				}
+				if minval < 0 {
+					panic("invalid regex")
+				} else if minval == 0 {
+					tokens = append(tokens, &Token{Type: Optional})
+				} else {
+					tokens = append(tokens, &Token{Value: fmt.Sprint(minval - 1), Type: Repeat})
+				}
 			} else {
 				panic("invalid regex")
 			}
@@ -74,8 +156,10 @@ func Preprocess(s string) []*Token {
 			tokens = append(tokens, &Token{Value: string(s[i]), Type: Literal})
 		}
 
-		if i+1 < len(s) && !Operator[CharType[s[i+1]]] {
-			tokens = append(tokens, &Token{Type: Concat})
+		if CharType[s[i]] != Union && CharType[s[i]] != OpenGroup {
+			if i+1 < len(s) && !Operator[CharType[s[i+1]]] && CharType[s[i+1]] != CloseGroup {
+				tokens = append(tokens, &Token{Type: Concat})
+			}
 		}
 	}
 	return tokens
@@ -109,7 +193,8 @@ func Postfix(tokens []*Token) []*Token {
 				if Precedence[t.Type] >= Precedence[token.Type] {
 					stack = stack[:len(stack)-1]
 					queue = append(queue, t)
-					continue
+				} else {
+					break
 				}
 			}
 			stack = append(stack, token)

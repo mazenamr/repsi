@@ -1,6 +1,7 @@
 package nfa
 
 import (
+	"fmt"
 	"sort"
 	"strconv"
 )
@@ -62,4 +63,25 @@ func (m *Machine) States() []*State {
 	})
 
 	return states
+}
+
+func (m *Machine) Copy() *Machine {
+	equivalent := make(map[*State]*State)
+	for _, s := range m.States() {
+		equivalent[s] = &State{Name: s.Name, Moves: make([]*Move, 0, len(s.Moves))}
+	}
+	for _, s := range m.States() {
+		for _, m := range s.Moves {
+			equivalent[s].Moves = append(equivalent[s].Moves, &Move{Token: m.Token, To: equivalent[m.To]})
+		}
+	}
+	return &Machine{equivalent[m.Start], equivalent[m.End]}
+}
+
+func (m *Machine) Renumber() {
+	count = 0
+	for _, s := range m.States() {
+		s.Name = fmt.Sprintf("S%d", count)
+		count++
+	}
 }

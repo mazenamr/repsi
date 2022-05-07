@@ -17,13 +17,3 @@ func TokenMachine(t string) *Machine {
 	m.Start.Moves = []*Move{{Token: t, To: m.End}}
 	return m
 }
-
-func PlusMachine() *Machine {
-	m := EmptyMachine()
-	return m
-}
-
-func StarMachine() *Machine {
-	m := EmptyMachine()
-	return m
-}
