@@ -12,7 +12,7 @@ func EmptyMachine() *Machine {
 	return &Machine{start, end}
 }
 
-func TokenMachine(t rune) *Machine {
+func TokenMachine(t string) *Machine {
 	m := EmptyMachine()
 	m.Start.Moves = []*Move{{Token: t, To: m.End}}
 	return m

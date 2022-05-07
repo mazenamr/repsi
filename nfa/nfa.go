@@ -21,7 +21,7 @@ type State struct {
 }
 
 type Move struct {
-	Token rune
+	Token string
 	To    *State
 }
 

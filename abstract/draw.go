@@ -81,8 +81,6 @@ func (a *AbstractMachine) Draw(filename string) {
 				}
 
 				switch t {
-				case string(consts.WildcardToken):
-					t = "<any>"
 				case "":
 					t = "<empty>"
 				case " ":

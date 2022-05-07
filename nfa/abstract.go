@@ -30,7 +30,7 @@ func FromAbstract(a *abstract.AbstractMachine) *Machine {
 	for _, s := range states {
 		for token, to := range a.States[s.Name].Moves {
 			for _, t := range to {
-				s.Moves = append(s.Moves, &Move{rune(token[0]), states[t]})
+				s.Moves = append(s.Moves, &Move{token, states[t]})
 			}
 		}
 	}
