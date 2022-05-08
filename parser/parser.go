@@ -12,11 +12,11 @@ func Parse(s string) *nfa.Machine {
 	if len(s) == 0 {
 		return nfa.EmptyMachine()
 	}
-	tokens := tokenize(s)
-	if !checkBrackets(tokens) {
+	tokens := Tokenize(s)
+	if !CheckBrackets(tokens) {
 		log.Fatal("invalid regex")
 	}
-	queue := postfix(tokens)
+	queue := Postfix(tokens)
 	stack := make([]*nfa.Machine, 0, len(queue))
 	for _, token := range queue {
 		switch token.Type {
@@ -73,7 +73,7 @@ func Parse(s string) *nfa.Machine {
 	return stack[0]
 }
 
-func tokenize(s string) []*Token {
+func Tokenize(s string) []*Token {
 	tokens := make([]*Token, 0, len(s))
 	for i := 0; i < len(s); i++ {
 		switch s[i] {
@@ -169,7 +169,7 @@ func tokenize(s string) []*Token {
 	return tokens
 }
 
-func checkBrackets(tokens []*Token) bool {
+func CheckBrackets(tokens []*Token) bool {
 	stack := make([]*Token, 0, len(tokens))
 	for _, token := range tokens {
 		switch token.Type {
@@ -185,7 +185,7 @@ func checkBrackets(tokens []*Token) bool {
 	return len(stack) == 0
 }
 
-func postfix(tokens []*Token) []*Token {
+func Postfix(tokens []*Token) []*Token {
 	stack := make([]*Token, 0, len(tokens))
 	queue := make([]*Token, 0, len(tokens))
 	for _, token := range tokens {

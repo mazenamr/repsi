@@ -60,6 +60,21 @@ func (m *Machine) Machines() []*Machine {
 	return states
 }
 
+func (m *Machine) Tokens() []string {
+	set := make(map[string]bool)
+	machines := m.Machines()
+	for _, n := range machines {
+		for t := range n.Moves {
+			set[t] = true
+		}
+	}
+	tokens := make([]string, 0, len(set))
+	for t := range set {
+		tokens = append(tokens, t)
+	}
+	return tokens
+}
+
 func (m *Machine) Renumber() {
 	count = 0
 	for _, s := range m.Machines() {

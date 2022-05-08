@@ -22,6 +22,5 @@ func main() {
 	a := abstract.Load(os.Args[2])
 	n := nfa.FromAbstract(a)
 	d := dfa.Generate(n)
-	fmt.Println(d)
 	d.Abstract().Out(os.Args[3])
 }
