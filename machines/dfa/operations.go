@@ -1,6 +1,9 @@
 package dfa
 
 import (
+	"fmt"
+	"math/big"
+	"repsi/consts"
 	"repsi/machines/helpers"
 	"repsi/machines/nfa"
 )
@@ -63,4 +66,82 @@ func Generate(m *nfa.Machine) *Machine {
 
 	start.Renumber()
 	return start
+}
+
+func (m *Machine) Minimize() *Machine {
+	machines := m.Machines()
+	machineGroup := make(map[*Machine]int)
+	groups := make([][]*Machine, 0, len(machines))
+	groups = append(groups, make([]*Machine, 0, len(machines)))
+	groups = append(groups, make([]*Machine, 0, len(machines)))
+	last := 1
+
+	for _, m := range machines {
+		if !m.Terminating {
+			machineGroup[m] = 0
+			groups[0] = append(groups[0], m)
+		} else {
+			machineGroup[m] = 1
+			groups[1] = append(groups[1], m)
+		}
+	}
+
+	tokens := m.Tokens()
+	primes := consts.Primes(len(tokens) * len(machines))
+
+	vals := make(map[string]map[int]int)
+	for i, t := range tokens {
+		vals[t] = make(map[int]int)
+		for j := 0; j < len(machines); j++ {
+			vals[t][j] = primes[i*len(machines)+j]
+		}
+	}
+
+	prev := -1
+	for prev != last {
+		prev = last
+		for i, g := range groups {
+			moveGroup := make(map[string]int)
+			product := big.NewInt(1)
+			for _, t := range tokens {
+				if _, ok := g[0].Moves[t]; ok {
+					product.Mul(product, big.NewInt(int64(vals[t][machineGroup[g[0].Moves[t]]])))
+				}
+			}
+			moveGroup[fmt.Sprint(product)] = i
+			for _, n := range g[1:] {
+				product := big.NewInt(1)
+				for _, t := range tokens {
+					if _, ok := n.Moves[t]; ok {
+						product.Mul(product, big.NewInt(int64(vals[t][machineGroup[n.Moves[t]]])))
+					}
+				}
+				if _, ok := moveGroup[fmt.Sprint(product)]; !ok {
+					last++
+					machineGroup[n] = last
+					moveGroup[fmt.Sprint(product)] = last
+					groups = append(groups, make([]*Machine, 0, len(machines)))
+				}
+				if machineGroup[n] != i {
+					groups[machineGroup[n]] = append(groups[machineGroup[n]], n)
+					for j, g := range groups[i] {
+						if g == n {
+							groups[i] = append(groups[i][:j], groups[i][j+1:]...)
+							break
+						}
+					}
+				}
+			}
+		}
+	}
+
+	for _, g := range groups {
+		for t := range g[0].Moves {
+			g[0].Moves[t] = groups[machineGroup[g[0].Moves[t]]][0]
+		}
+	}
+
+	n := groups[machineGroup[m]][0]
+	n.Renumber()
+	return n
 }
