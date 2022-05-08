@@ -72,15 +72,24 @@ func (m *Machine) Minimize() *Machine {
 	machines := m.Machines()
 	machineGroup := make(map[*Machine]int)
 	groups := make([][]*Machine, 0, len(machines))
-	groups = append(groups, make([]*Machine, 0, len(machines)))
-	groups = append(groups, make([]*Machine, 0, len(machines)))
-	last := 1
 
+	last := -1
+	terminating, nonterminating := false, false
 	for _, m := range machines {
 		if !m.Terminating {
+			if !nonterminating {
+				last++
+				groups = append(groups, make([]*Machine, 0, len(machines)))
+				nonterminating = true
+			}
 			machineGroup[m] = 0
 			groups[0] = append(groups[0], m)
 		} else {
+			if !terminating {
+				last++
+				groups = append(groups, make([]*Machine, 0, len(machines)))
+				terminating = true
+			}
 			machineGroup[m] = 1
 			groups[1] = append(groups[1], m)
 		}
