@@ -25,8 +25,9 @@ func Generate(m *nfa.Machine) *Machine {
 	machines[start.Name] = start
 	closures[start] = startClosure
 
-	for {
-		change := false
+	change := true
+	for change {
+		change = false
 		for s, m := range machines {
 			if set[s] {
 				for _, t := range tokens(closures[m]) {
@@ -61,9 +62,6 @@ func Generate(m *nfa.Machine) *Machine {
 				}
 				set[s] = false
 			}
-		}
-		if !change {
-			break
 		}
 	}
 
@@ -127,8 +125,9 @@ func epsilonClosure(s *nfa.State) []*nfa.State {
 	set := make(map[*nfa.State]bool)
 	set[s] = true
 
-	for {
-		change := false
+	change := true
+	for change {
+		change = false
 		for s := range set {
 			if set[s] {
 				for _, t := range s.Moves {
@@ -141,9 +140,6 @@ func epsilonClosure(s *nfa.State) []*nfa.State {
 				}
 				set[s] = false
 			}
-		}
-		if !change {
-			break
 		}
 	}
 

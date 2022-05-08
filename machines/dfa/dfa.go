@@ -32,8 +32,9 @@ func (m *Machine) Machines() []*Machine {
 	set := make(map[*Machine]bool)
 	set[m] = true
 
-	for {
-		change := false
+	change := true
+	for change {
+		change = false
 		for s := range set {
 			if set[s] {
 				for _, t := range s.Moves {
@@ -44,9 +45,6 @@ func (m *Machine) Machines() []*Machine {
 				}
 				set[s] = false
 			}
-		}
-		if !change {
-			break
 		}
 	}
 

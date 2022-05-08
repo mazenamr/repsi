@@ -53,8 +53,9 @@ func (m *Machine) States() []*State {
 	set := make(map[*State]bool)
 	set[m.Start] = true
 
-	for {
-		change := false
+	change := true
+	for change {
+		change = false
 		for s := range set {
 			if set[s] {
 				for _, t := range s.Moves {
@@ -65,9 +66,6 @@ func (m *Machine) States() []*State {
 				}
 				set[s] = false
 			}
-		}
-		if !change {
-			break
 		}
 	}
 
