@@ -54,6 +54,8 @@ func Tokens(s []*nfa.State) []string {
 						} else {
 							log.Fatal("[^] not supported yet")
 						}
+					} else {
+						set[m.Token] = true
 					}
 				} else {
 					set[m.Token] = true

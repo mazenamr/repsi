@@ -1,6 +1,7 @@
 package dfa
 
 import (
+	"log"
 	"repsi/machines/abstract"
 	"repsi/machines/helpers"
 )
@@ -41,7 +42,22 @@ func FromAbstract(a *abstract.Machine) *Machine {
 	for _, s := range machines {
 		for token, to := range a.States[s.Name].Moves {
 			for _, t := range to {
-				s.Moves[token] = machines[t]
+				if len(t) > 1 {
+					if t[0] == '[' && t[len(t)-1] == ']' {
+						if t[1] != '^' {
+							chars := helpers.ExpandCharset(t[1 : len(t)-1])
+							for _, c := range chars {
+								s.Moves[c] = machines[t]
+							}
+						} else {
+							log.Fatal("[^] not supported yet")
+						}
+					} else {
+						s.Moves[token] = machines[t]
+					}
+				} else {
+					s.Moves[token] = machines[t]
+				}
 			}
 		}
 	}
