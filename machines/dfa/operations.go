@@ -82,7 +82,7 @@ func (m *Machine) Minimize() *Machine {
 				nonterminating = last
 				groups = append(groups, make([]*Machine, 0, len(machines)))
 			}
-			machineGroup[m] = 0
+			machineGroup[m] = nonterminating
 			groups[nonterminating] = append(groups[nonterminating], m)
 		} else {
 			if terminating == -1 {
@@ -90,7 +90,7 @@ func (m *Machine) Minimize() *Machine {
 				terminating = last
 				groups = append(groups, make([]*Machine, 0, len(machines)))
 			}
-			machineGroup[m] = 1
+			machineGroup[m] = terminating
 			groups[terminating] = append(groups[terminating], m)
 		}
 	}
