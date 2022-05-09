@@ -1,22 +1,19 @@
 package consts
 
-func isPrime(n int) bool {
-	if n < 2 {
-		return false
-	}
-	for i := 2; i*i <= n; i++ {
-		if n%i == 0 {
-			return false
-		}
-	}
-	return true
-}
+import (
+	"log"
+	"math/big"
+)
 
-func Primes(n int) []int {
-	var primes []int
-	for i := 2; len(primes) < n; i++ {
-		if isPrime(i) {
-			primes = append(primes, i)
+func Primes(n int) []int64 {
+	var primes []int64
+	one := big.NewInt(1)
+	for i := big.NewInt(2); len(primes) < n; i.Add(i, one) {
+		if i.ProbablyPrime(0) {
+			if !i.IsInt64() {
+				log.Fatal("an error has occured")
+			}
+			primes = append(primes, i.Int64())
 		}
 	}
 	return primes

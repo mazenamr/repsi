@@ -97,11 +97,11 @@ func Terminating(s []*nfa.State) bool {
 func PrimeName(s []*nfa.State) string {
 	product := big.NewInt(1)
 	for _, t := range s {
-		v, err := strconv.Atoi(t.Name[1:])
+		v, err := strconv.ParseInt(t.Name[1:], 10, 64)
 		if err != nil {
 			log.Fatal(err)
 		}
-		product.Mul(product, big.NewInt(int64(v)))
+		product.Mul(product, big.NewInt(v))
 	}
 	return fmt.Sprintf("S%d", product)
 }

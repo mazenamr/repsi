@@ -5,7 +5,7 @@ import (
 	"sort"
 )
 
-var count int = 0
+var count int64 = 0
 
 type Machine struct {
 	Name        string

@@ -98,9 +98,9 @@ func (m *Machine) Minimize() *Machine {
 	tokens := m.Tokens()
 	primes := consts.Primes(len(tokens) * len(machines))
 
-	vals := make(map[string]map[int]int)
+	vals := make(map[string]map[int]int64)
 	for i, t := range tokens {
-		vals[t] = make(map[int]int)
+		vals[t] = make(map[int]int64)
 		for j := 0; j < len(machines); j++ {
 			vals[t][j] = primes[i*len(machines)+j]
 		}
@@ -114,7 +114,7 @@ func (m *Machine) Minimize() *Machine {
 			product := big.NewInt(1)
 			for _, t := range tokens {
 				if _, ok := g[0].Moves[t]; ok {
-					product.Mul(product, big.NewInt(int64(vals[t][machineGroup[g[0].Moves[t]]])))
+					product.Mul(product, big.NewInt(vals[t][machineGroup[g[0].Moves[t]]]))
 				}
 			}
 			moveGroup[fmt.Sprint(product)] = i
@@ -122,7 +122,7 @@ func (m *Machine) Minimize() *Machine {
 				product := big.NewInt(1)
 				for _, t := range tokens {
 					if _, ok := n.Moves[t]; ok {
-						product.Mul(product, big.NewInt(int64(vals[t][machineGroup[n.Moves[t]]])))
+						product.Mul(product, big.NewInt(vals[t][machineGroup[n.Moves[t]]]))
 					}
 				}
 				if _, ok := moveGroup[fmt.Sprint(product)]; !ok {
