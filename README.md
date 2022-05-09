@@ -8,9 +8,9 @@ repsi convert <regex>
 ```
 
 this outputs the following files:
-    + nfa.json
-    + nfa.svg
-    + dfa.json
-    + dfa.svg
-    + dfa-minimized.json
-    + dfa-minimized.svg
++ nfa.json
++ nfa.svg
++ dfa.json
++ dfa.svg
++ dfa-minimized.json
++ dfa-minimized.svg
