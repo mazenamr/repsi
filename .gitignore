@@ -19,5 +19,6 @@
 *.json
 *.svg
 
+repsi
 reg2nfa/reg2nfa
 nfa2dfa/nfa2dfa
