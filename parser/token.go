@@ -1,9 +1,9 @@
 package parser
 
-type tokenType int64
+type TokenType int
 
 const (
-	Literal tokenType = iota
+	Literal TokenType = iota
 	Wildcard
 	CharSet
 	Union
@@ -16,7 +16,7 @@ const (
 	CloseGroup
 )
 
-var charTokenType = map[byte]tokenType{
+var CharTokenType = map[byte]TokenType{
 	'.': Wildcard,
 	'[': CharSet,
 	'|': Union,
@@ -28,7 +28,7 @@ var charTokenType = map[byte]tokenType{
 	')': CloseGroup,
 }
 
-var isOperator = map[tokenType]bool{
+var IsOperator = map[TokenType]bool{
 	Union:    true,
 	Concat:   true,
 	Repeat:   true,
@@ -37,7 +37,7 @@ var isOperator = map[tokenType]bool{
 	Star:     true,
 }
 
-var precedence = map[tokenType]int{
+var Precedence = map[TokenType]int{
 	OpenGroup: 0,
 	Union:     1,
 	Concat:    2,
@@ -49,5 +49,5 @@ var precedence = map[tokenType]int{
 
 type Token struct {
 	Value string
-	Type  tokenType
+	Type  TokenType
 }

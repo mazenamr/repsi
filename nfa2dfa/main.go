@@ -21,8 +21,10 @@ func main() {
 
 	a := abstract.Load(os.Args[2])
 	n := nfa.FromAbstract(a)
+
 	d := dfa.Generate(n)
 	d.Abstract().Out(os.Args[3])
+
 	d = d.Minimize()
-	d.Abstract().Out(os.Args[3] + "-min")
+	d.Abstract().Out(os.Args[3] + "-minimized")
 }

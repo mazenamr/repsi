@@ -34,12 +34,12 @@ func Load(filename string) *Machine {
 }
 
 func (a *Machine) Save(filename string) {
-	f, _ := os.Create(filename)
+	f, _ := os.Create(fmt.Sprintf("%s.json", filename))
 	defer f.Close()
 	f.WriteString(a.Json())
 }
 
 func (a *Machine) Out(filename string) {
-	a.Save(fmt.Sprintf("%s.json", filename))
+	a.Save(filename)
 	a.Draw(filename)
 }

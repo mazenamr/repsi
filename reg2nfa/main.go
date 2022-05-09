@@ -7,16 +7,16 @@ import (
 )
 
 func main() {
-	if len(os.Args) != 3 {
-		fmt.Fprintf(os.Stderr, "Usage: %s convert <regex>\n", os.Args[0])
+	if len(os.Args) != 4 {
+		fmt.Fprintf(os.Stderr, "Usage: %s convert <regex> <output-file>\n", os.Args[0])
 		os.Exit(1)
 	}
 
 	if os.Args[1] != "convert" {
-		fmt.Fprintf(os.Stderr, "Usage: %s convert <regex>\n", os.Args[0])
+		fmt.Fprintf(os.Stderr, "Usage: %s convert <regex> <output-file>\n", os.Args[0])
 		os.Exit(1)
 	}
 
 	m := parser.Parse(os.Args[2])
-	m.Abstract().Out("nfa")
+	m.Abstract().Out(os.Args[3])
 }

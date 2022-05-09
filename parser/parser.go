@@ -87,7 +87,7 @@ func Tokenize(s string) []*Token {
 			tokens = append(tokens, &Token{Type: Optional})
 		case '|':
 			tokens = append(tokens, &Token{Type: Union})
-			if i+1 < len(s) && isOperator[charTokenType[s[i+1]]] {
+			if i+1 < len(s) && IsOperator[CharTokenType[s[i+1]]] {
 				log.Fatal("invalid regex")
 			}
 		case '(':
@@ -160,8 +160,8 @@ func Tokenize(s string) []*Token {
 			tokens = append(tokens, &Token{Value: string(s[i]), Type: Literal})
 		}
 
-		if charTokenType[s[i]] != Union && charTokenType[s[i]] != OpenGroup {
-			if i+1 < len(s) && !isOperator[charTokenType[s[i+1]]] && charTokenType[s[i+1]] != CloseGroup {
+		if CharTokenType[s[i]] != Union && CharTokenType[s[i]] != OpenGroup {
+			if i+1 < len(s) && !IsOperator[CharTokenType[s[i+1]]] && CharTokenType[s[i+1]] != CloseGroup {
 				tokens = append(tokens, &Token{Type: Concat})
 			}
 		}
@@ -191,10 +191,10 @@ func Postfix(tokens []*Token) []*Token {
 	for _, token := range tokens {
 		if token.Type == Literal || token.Type == Wildcard || token.Type == CharSet {
 			queue = append(queue, token)
-		} else if isOperator[token.Type] {
+		} else if IsOperator[token.Type] {
 			for len(stack) > 0 {
 				t := stack[len(stack)-1]
-				if precedence[t.Type] >= precedence[token.Type] {
+				if Precedence[t.Type] >= Precedence[token.Type] {
 					stack = stack[:len(stack)-1]
 					queue = append(queue, t)
 				} else {
